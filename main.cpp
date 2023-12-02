@@ -61,22 +61,29 @@ std::unordered_multimap<std::string, weatherData> populateMap(string csvFile) //
 
 void printMap(std::unordered_multimap<std::string, weatherData> weatherMap) //prints the multimap data
 {
-    auto it = weatherMap.begin();    
-        std::cout << "State: " << it->first << " "
-                  << "Year: " << it->second.year << " "
-                  << "Event: " << it->second.eventType << " "
-                  << "Injuries: " << (stoi(it->second.injuriesDirect)+stoi(it->second.injuriesIndirect)) << " "
-                  << "Property Damage: " << it->second.propertyDamage << " "
-                  << std:: endl;
+    auto it = weatherMap.begin();    //test to print first element
+        std::cout << "State: " << it->first << "\n"
+                  << "Year: " << it->second.year << "\n"
+                  << "Event: " << it->second.eventType << "\n"
+                  << "Direct Injuries: " << it->second.injuriesDirect << "\n"
+                  << "Indirect Injuries: " << it->second.injuriesIndirect << "\n"
+                  << "Direct Deaths: " << it->second.deathsDirect << "\n"
+                  << "Indirect Deaths: " << it->second.deathsIndirect << "\n"
+                  << "Property Damage: " << it->second.propertyDamage << "\n"
+                  << "Tor Scale: " << it->second.torScale << "\n\n";
+
     /*
-    for(auto& data :weatherMap)
+    for(auto& data :weatherMap) //print all elements
     {
-        std::cout << "State: " << data.first << " "
-                  << "Year: " << data.second.year << " "
-                  << "Event: " << data.second.eventType << " "
-                  << "Direct Injuries: " << data.second.injuriesDirect
-                  << "Indirect Injuries: " << data.second.injuriesIndirect << " "
-                  << std:: endl;
+        std::cout << "State: " << data.first << "\n"
+                  << "Year: " << data.second.year << "\n"
+                  << "Event: " << data.second.eventType << "\n"
+                  << "Direct Injuries: " << data.second.injuriesDirect << "\n"
+                  << "Indirect Injuries: " << data.second.injuriesIndirect << "\n"
+                  << "Direct Deaths: " << data.econd.deathsDirect << "\n"
+                  << "Indirect Deaths: " << data.second.deathsIndirect << "\n"
+                  << "Property Damage: " << data.second.propertyDamage << "\n"
+                  << "Tor Scale: " << data.second.torScale << "\n\n";
     }*/
 }
 
