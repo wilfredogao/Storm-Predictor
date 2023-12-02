@@ -2,7 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <map>
+#include <unordered_map>
 using namespace std;
 
 class weatherData //weather data to store the associated data in the map
@@ -29,9 +29,9 @@ class weatherData //weather data to store the associated data in the map
         torScale(TorS){}
 };
 
-std::multimap<std::string, weatherData> populateMap(string csvFile)
+std::unordered_multimap<std::string, weatherData> populateMap(string csvFile) //read the file and allocate data to a multimap
 {
-    std::multimap<std::string, weatherData> tempMap;
+    std::unordered_multimap<std::string, weatherData> tempMap;
     fstream file(csvFile, ios::in);
     string line;
 
@@ -59,17 +59,30 @@ std::multimap<std::string, weatherData> populateMap(string csvFile)
     return tempMap;
 }
 
-void printMap(std::multimap<std::string, weatherData> weatherMap)
+void printMap(std::unordered_multimap<std::string, weatherData> weatherMap) //prints the multimap data
 {
+    auto it = weatherMap.begin();    
+        std::cout << "State: " << it->first << " "
+                  << "Year: " << it->second.year << " "
+                  << "Event: " << it->second.eventType << " "
+                  << "Injuries: " << (stoi(it->second.injuriesDirect)+stoi(it->second.injuriesIndirect)) << " "
+                  << "Property Damage: " << it->second.propertyDamage << " "
+                  << std:: endl;
+    /*
     for(auto& data :weatherMap)
     {
-        std::cout << "State: " << data.first << std:: endl;
-    }
+        std::cout << "State: " << data.first << " "
+                  << "Year: " << data.second.year << " "
+                  << "Event: " << data.second.eventType << " "
+                  << "Direct Injuries: " << data.second.injuriesDirect
+                  << "Indirect Injuries: " << data.second.injuriesIndirect << " "
+                  << std:: endl;
+    }*/
 }
 
 int main() 
 {
-    std::multimap<std::string, weatherData> weatherMap = populateMap("filteredWeatherData.csv");
+    std::unordered_multimap<std::string, weatherData> weatherMap = populateMap("filteredWeatherData.csv");
     printMap(weatherMap);
 
     std::cout << "Hello, World!" << std::endl;
