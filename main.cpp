@@ -1,13 +1,82 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <string>
+#include <map>
 using namespace std;
 
-int main() {
+class weatherData //weather data to store the associated data in the map
+{
+    public:
+        string year;
+        string eventType;
+        string injuriesDirect;
+        string injuriesIndirect;
+        string deathsDirect;
+        string deathsIndirect;
+        string propertyDamage;
+        string torScale;
+
+    //constructor
+    weatherData(string y, string event, string injuriesD, string injuriesInd, string deathD, string deathInd, string propertyD, string TorS):
+        year(y), 
+        eventType(event), 
+        injuriesDirect(injuriesD), 
+        injuriesIndirect(injuriesInd), 
+        deathsDirect(deathD), 
+        deathsIndirect(deathInd), 
+        propertyDamage(propertyD), 
+        torScale(TorS){}
+};
+
+std::multimap<std::string, weatherData> populateMap(string csvFile)
+{
+    std::multimap<std::string, weatherData> tempMap;
+    fstream file(csvFile, ios::in);
+    string line;
+
+    if(file.is_open())
+    {
+        while(getline(file, line))
+        {
+            stringstream str(line);
+            string state, event, dmg, tor, year, injuryD, injuryInd, deathDirect, deathIndirect;
+
+            getline(str, state, ',');
+            getline(str, year, ',');
+            getline(str, event, ',');
+            getline(str, injuryD, ',');
+            getline(str, injuryInd, ',');
+            getline(str, deathDirect, ',');
+            getline(str, deathIndirect, ',');
+            getline(str, dmg, ',');
+            getline(str, tor, ',');
+
+            tempMap.insert({state, weatherData(year, event, injuryD, injuryInd, deathDirect, deathIndirect, dmg, tor)});
+        }
+    }
+
+    return tempMap;
+}
+
+void printMap(std::multimap<std::string, weatherData> weatherMap)
+{
+    for(auto& data :weatherMap)
+    {
+        std::cout << "State: " << data.first << std:: endl;
+    }
+}
+
+int main() 
+{
+    std::multimap<std::string, weatherData> weatherMap = populateMap("filteredWeatherData.csv");
+    printMap(weatherMap);
+
     std::cout << "Hello, World!" << std::endl;
     return 0;
 }
 
-
+/*
 //basic merge sort function
 string <pair<string, string>> mergeSort(string <pair<string, string>> map) { //edit based on type of map used and return type
     if length(map) < = 1;
@@ -66,4 +135,4 @@ int partition (string<pair<string, string>> map, int low, int high) { //edit all
     }
     swap(map[left], map[high]) //move pivot to the middle
     return left; //return partitioning index
-}
+}*/
