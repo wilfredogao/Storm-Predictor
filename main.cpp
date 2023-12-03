@@ -2,12 +2,14 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <cctype>
+#include <algorithm>
 #include <unordered_map>
 using namespace std;
 
 class weatherData //weather data to store the associated data in the map
 {
-    public:
+    private:
         string year;
         string eventType;
         string injuriesDirect;
@@ -17,16 +19,115 @@ class weatherData //weather data to store the associated data in the map
         string propertyDamage;
         string torScale;
 
-    //constructor
-    weatherData(string y, string event, string injuriesD, string injuriesInd, string deathD, string deathInd, string propertyD, string TorS):
-        year(y), 
-        eventType(event), 
-        injuriesDirect(injuriesD), 
-        injuriesIndirect(injuriesInd), 
-        deathsDirect(deathD), 
-        deathsIndirect(deathInd), 
-        propertyDamage(propertyD), 
-        torScale(TorS){}
+    public:
+        //constructor
+        weatherData(string y, string event, string injuriesD, string injuriesInd, string deathD, string deathInd, string propertyD, string TorS):
+            year(y), 
+            eventType(event), 
+            injuriesDirect(injuriesD), 
+            injuriesIndirect(injuriesInd), 
+            deathsDirect(deathD), 
+            deathsIndirect(deathInd), 
+            propertyDamage(propertyD), 
+            torScale(TorS){}
+
+        //accessors
+        std::string getYear()
+        {
+                return year;
+        }
+
+        std::string getEvent()
+        {
+            string temp = "";
+            if(eventType == "-100") //set blanks to -100 in data processing
+            {
+                return temp = "No event recorded";
+            }
+            else
+                return temp = eventType;
+        }
+
+        std::string getInjuries()
+        {
+            std::string temp = "";
+            try 
+            {
+                if (injuriesDirect == "-100") 
+                {
+                    injuriesDirect = "0";
+                } 
+                if (injuriesIndirect == "-100") 
+                {
+                    injuriesIndirect = "0";
+                }
+
+                temp = std::to_string(std::stoi(injuriesDirect) + std::stoi(injuriesIndirect));
+            } 
+            catch (const std::invalid_argument& e) 
+            {
+                temp = "0";   
+            }
+
+            return temp;
+        }
+
+        std::string getDeaths()
+        {
+           std::string temp = "";
+            try 
+            {
+                if (deathsDirect == "-100") 
+                {
+                    deathsDirect = "0";
+                } 
+                if (deathsIndirect == "-100") 
+                {
+                    deathsIndirect = "0";
+                }
+
+                temp = std::to_string(std::stoi(deathsDirect) + std::stoi(deathsIndirect));
+            } 
+            catch (const std::invalid_argument& e) 
+            {
+                temp = "0";
+            }
+
+            return temp;
+        }
+
+        std::string getPropertyDMG()
+        {
+            string temp = "";
+            if(propertyDamage == "-100") //set blanks to -100 in data processing
+            {
+                return temp = "$0";
+            }
+            else
+                return temp = "$" + propertyDamage;
+        }
+
+        std::string getTorScale() //returns tor scale
+        //https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/Storm-Data-Bulk-csv-Format.pdf 
+        {
+            string temp = "";
+            if(torScale == "-100") //set blanks to -100 in data processing
+            {
+                return temp = "";
+            }
+            else if(torScale == "F0")
+                return temp = "Tor Scale: Light Damage (40 to 72 mph)";
+            else if(torScale == "F1")
+                return temp = "Tor Scale: Moderate Damage (73 to 112 mph)";
+            else if(torScale == "F2")
+                return temp = "Tor Scale: Significant damage (113 to 157 mph)";
+            else if(torScale == "F3")
+                return temp = "Tor Scale: Severe Damage (158 to 206 mph)";
+            else if(torScale == "F4")
+                return temp = "Tor Scale: Devastating Damage (207 to 260 mph)";
+            else if(torScale == "F5")
+                return temp = "Tor Scale: Incredible Damage (261 to 318 mph)";
+        }
 };
 
 std::unordered_multimap<std::string, weatherData> populateMap(string csvFile) //read the file and allocate data to a multimap
@@ -59,40 +160,88 @@ std::unordered_multimap<std::string, weatherData> populateMap(string csvFile) //
     return tempMap;
 }
 
-void printMap(std::unordered_multimap<std::string, weatherData> weatherMap) //prints the multimap data
+void printMap(std::unordered_multimap<std::string, weatherData> weatherMap, string userState, string userYear, bool& foundState, bool& foundYear) //prints the multimap data
 {
-    auto it = weatherMap.begin();    //test to print first element
-        std::cout << "State: " << it->first << "\n"
-                  << "Year: " << it->second.year << "\n"
-                  << "Event: " << it->second.eventType << "\n"
-                  << "Direct Injuries: " << it->second.injuriesDirect << "\n"
-                  << "Indirect Injuries: " << it->second.injuriesIndirect << "\n"
-                  << "Direct Deaths: " << it->second.deathsDirect << "\n"
-                  << "Indirect Deaths: " << it->second.deathsIndirect << "\n"
-                  << "Property Damage: " << it->second.propertyDamage << "\n"
-                  << "Tor Scale: " << it->second.torScale << "\n\n";
-
-    /*
-    for(auto& data :weatherMap) //print all elements
+    /*auto it = weatherMap.begin();    //test to print first element
+    std::cout   << "State: " << it->first << "\n"
+                << "Year: " << it->second.getYear() << "\n"
+                << "Event: " << it->second.getEvent() << "\n"
+                //<< "Direct Injuries: " << it->second.injuriesDirect << "\n"
+                << "Resulting injuries: " << it->second.getInjuries() << "\n"
+                //<< "Direct Deaths: " << it->second.deathsDirect << "\n"
+                << "Resulting deaths: " << it->second.getDeaths() << "\n"
+                << "Property Damage: " << it->second.getPropertyDMG() << "\n"
+                << it->second.getTorScale() << "\n\n";
+    */
+    
+    for(auto& data :weatherMap) //looks through all elements
     {
-        std::cout << "State: " << data.first << "\n"
-                  << "Year: " << data.second.year << "\n"
-                  << "Event: " << data.second.eventType << "\n"
-                  << "Direct Injuries: " << data.second.injuriesDirect << "\n"
-                  << "Indirect Injuries: " << data.second.injuriesIndirect << "\n"
-                  << "Direct Deaths: " << data.econd.deathsDirect << "\n"
-                  << "Indirect Deaths: " << data.second.deathsIndirect << "\n"
-                  << "Property Damage: " << data.second.propertyDamage << "\n"
-                  << "Tor Scale: " << data.second.torScale << "\n\n";
-    }*/
+        if(userState == data.first)
+        {
+            foundState = true;
+            if(userYear == data.second.getYear())
+            {
+                foundYear = true;
+                std::cout   << "Thanks for waiting! Here's your weather report: \n"
+                    << "State: " << data.first << "\n"
+                    << "Year: " << data.second.getYear() << "\n"
+                    << "Event: " << data.second.getEvent() << "\n"
+                    //<< "Direct Injuries: " << it->second.injuriesDirect << "\n"
+                    << "Resulting injuries: " << data.second.getInjuries() << "\n"
+                    //<< "Direct Deaths: " << it->second.deathsDirect << "\n"
+                    << "Resulting deaths: " << data.second.getDeaths() << "\n"
+                    << "Property Damage: " << data.second.getPropertyDMG() << "\n"
+                    << data.second.getTorScale() << "\n\n";
+            }
+        }
+    }
+}
+
+void runProgram() //runs the program, keeps main clean 
+{
+    string inputState = "", inputYear = "", again = "";
+    bool run = true;
+    bool stateFound = false;
+    bool yearFound = false;
+    std::unordered_multimap<std::string, weatherData> weatherMap = populateMap("filteredWeatherData.csv");
+    do //run until user doesn't want to
+    {
+        stateFound = false;
+        yearFound = false;
+        cout << "Hi! Which state would you like weather data for?\n";
+        cin >> inputState;
+        transform(inputState.begin(), inputState.end(), inputState.begin(), ::toupper);
+        //https://stackoverflow.com/questions/23418390/how-to-convert-a-c-string-to-uppercase
+        cout << "\nGreat thanks for the information! For " + inputState + ", which year would you like weather data for?\n";
+        cin >> inputYear;
+        cout << "\nThanks, one moment while we prepare this data for you. Hope your day is going great!\n\n";
+        printMap(weatherMap, inputState, inputYear, stateFound, yearFound);
+
+        if(!stateFound)
+        {
+            cout << "Thanks for waiting! Unfortunately, there is no data for that state.\n\n";
+        }
+        else if (!yearFound)
+        {
+            cout << "Thanks for waiting! Unfortunately, for " + inputState + " there is no data for that year.\n\n";
+        }
+
+        cout << "Would you like to enter another state and year to try again? (Y/N)\n";
+        cin >> again;
+        cout << "\n";
+        transform(again.begin(), again.end(), again.begin(), ::toupper);
+        if(again != "Y")
+        {
+            run = false;
+        }
+
+    }
+    while(run);
 }
 
 int main() 
-{
-    std::unordered_multimap<std::string, weatherData> weatherMap = populateMap("filteredWeatherData.csv");
-    printMap(weatherMap);
-
-    std::cout << "Hello, World!" << std::endl;
+{   
+    runProgram();
     return 0;
 }
 
