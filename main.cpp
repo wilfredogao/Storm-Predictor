@@ -246,14 +246,23 @@ int main()
 }
 
 
-/*
+
 //basic merge sort function
 unordered_multimap<string, weatherData> mergeSort(unordered_multimap<string, weatherData> map) {
-    if length(map) < = 1;
+    if (map.size() <= 1)
         return map;
-    int mid = length(map)/2; //divide map in half and recursively sort each half
-    unordered_multimap<string, weatherData> left = mergeSort(); //recursively sort the left half of data
-    unordered_multimap<string, weatherData> right = mergeSort(); //recursively sort the right half of data
+    int mid = map.size()/2; //divide map in half and recursively sort each half
+    unordered_multimap<string, weatherData> leftMap;
+    unordered_multimap<string, weatherData> rightMap;
+    unordered_multimap<string, weatherData>::iterator it;
+    for (int i = 0; i < mid; i++) {
+        leftMap.insert(map[i]);
+    }
+    for (int j = mid; j < map.size(); j++) {
+        rightMap.insert(map[j]);
+    }
+    unordered_multimap<string, weatherData> left = mergeSort(leftMap); //recursively sort the left half of data
+    unordered_multimap<string, weatherData> right = mergeSort(rightMap); //recursively sort the right half of data
     return merge(left, right);
 }
 
@@ -306,4 +315,3 @@ int partition (unordered_multimap<string, weatherData> map, int low, int high) {
     swap(map[left], map[high]) //move pivot to the middle
     return left; //return partitioning index
 }
-*/
