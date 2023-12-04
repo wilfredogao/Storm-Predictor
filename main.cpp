@@ -309,7 +309,35 @@ std::map<std::string, vector<weatherData>> populateMap(string csvFile) //read th
             getline(str, dmg, ',');
             getline(str, tor, ',');
 
-            if((injuryD != "0.0" && injuryD != "-100") && (dmg != "0K" && dmg != "-100")) {
+             //exception handling for blanks
+            if(injuryD == "-100")
+            {
+                injuryD = "0.0";
+            }
+            if(injuryInd == "-100")
+            {
+                injuryInd = "0.0";
+            }
+            if(deathDirect == "-100")
+            {
+                deathDirect = "0.0";
+            }
+            if(deathIndirect == "-100")
+            {
+                deathIndirect = "0.0";
+            }
+            if(dmg == "-100")
+            {
+                dmg = "0K";
+            }
+
+            if((injuryD != "0.0") || (injuryInd != "0.0") || (deathDirect != "0.0") || (deathIndirect != "0.0") || (dmg != "0K" || dmg != "0")){
+            /*if((injuryD != "0.0" && injuryD != "-100") 
+                || (injuryInd != "0.0" && injuryInd != "-100")
+                || (deathDirect != "0.0" && deathDirect != "-100")
+                || (deathIndirect != "0.0" && deathIndirect != "-100")
+                || (dmg != "0K" && dmg != "-100")) 
+            {*/
                 weatherData data(year, event, injuryD, injuryInd, deathDirect, deathIndirect, dmg,tor); //create a dara object
                 tempMap[state].push_back(data); //append the data object to the end of the states data vector
             }
