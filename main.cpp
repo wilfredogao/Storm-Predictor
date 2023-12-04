@@ -168,8 +168,10 @@ class weatherData //weather data to store the associated data in the map
                 }
             }
             else {
+                float midSplit = midYear + 0.5; // make sure midYear is between values so all indexes are split
+                //ie: 1992 1992 1994 -> midYear = 1992 -> midYear = 1992.5 -> leftMap = [1992, 1992], rightMap = [1994]
                 for (int i = 0; i < stateData.size(); i++) {
-                    if (std::stoi(stateData[i].getYear()) <= midYear) {
+                    if (std::stof(stateData[i].getYear()) < midSplit) {
                         leftMap.push_back(stateData[i]);
                     } else {
                         rightMap.push_back(stateData[i]);
