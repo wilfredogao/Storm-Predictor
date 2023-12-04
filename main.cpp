@@ -147,6 +147,26 @@ class weatherData //weather data to store the associated data in the map
             int midYear = std::stoi(stateData.at(mid).getYear());
             vector<weatherData> leftMap;
             vector<weatherData> rightMap;
+
+            //check if all data points are same year
+            int sameYearCount = 0;
+            for (int j = 0; j < stateData.size(); j++) {
+                if (stoi(stateData[j].getYear()) == midYear) {
+                    sameYearCount++;
+                }
+            }
+            //if all data points have the same year, split based on current index
+            if (sameYearCount == stateData.size()) {
+                for (int k = 0; k < stateData.size(); k++) {
+                    if (k < mid) {
+                        leftMap.push_back(stateData[k]);
+                    }
+                    else {
+                        rightMap.push_back(stateData[k]);
+                    }
+                }
+            }
+
             for (int i = 0; i < stateData.size(); i++) {
                 if (std::stoi(stateData[i].getYear()) < midYear) {
                     leftMap.push_back(stateData[i]);
