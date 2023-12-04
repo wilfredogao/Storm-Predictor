@@ -106,7 +106,16 @@ class weatherData //weather data to store the associated data in the map
                 return temp = "0";
             }
             else
-                return temp = propertyDamage;
+                if(propertyDamage.substr(propertyDamage.size()-1, 1) == "0"){
+                    temp = "0";
+                }
+                else if(propertyDamage.at(propertyDamage.size() - 1) == 'K'){
+                    temp = to_string(stoi(propertyDamage.substr(0, propertyDamage.size() - 1)) * 1000);
+                }
+                else if(propertyDamage.at(propertyDamage.size() - 1) == 'M'){
+                    temp = to_string(stoi(propertyDamage.substr(0, propertyDamage.size() - 1)) * 1000000);
+                }
+                return temp;
         }
 
         std::string getTorScale() //returns tor scale https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/Storm-Data-Bulk-csv-Format.pdf
@@ -208,8 +217,8 @@ class weatherData //weather data to store the associated data in the map
         }
 
         vector<string> getPrediction(vector<weatherData> stateData, string year, bool &foundYear){
-            unordered_map<string, int> events;
-            vector<weatherData> chosen;
+            unordered_map<string, int> events; //events stored as key, times the event happen as the value
+            vector<weatherData> chosen; //the weather data that appears in the given time frame
             for (int i = 0; i < stateData.size();i++) {
                 if ((stoi(year) - 10) < stoi(stateData.at(i).getYear()) && stoi(stateData.at(i).getYear()) <= stoi(year)) {
                     foundYear = true;
@@ -217,39 +226,41 @@ class weatherData //weather data to store the associated data in the map
                     chosen.push_back(stateData.at(i));
                 }
             }
-            int max = 0;
-            string mostEvent;
-            for(auto& data : events) //looks through all elements
+
+            int max = 0; //most common event
+            string mostEvent; //event that happens the most
+            for(auto& data : events)
             {
                 if(data.second > max){
-                    max = data.second;
-                    mostEvent = data.first;
+                    max = data.second; //if there is an event that happend the msot
+                    mostEvent = data.first; //the event
                 }
             }
-            float avgDamage = 0.0;
-            float avgInjured = 0.0;
-            float avgDeath = 0.0;
-            float total = 0.0; // total number of events
+            //get the total data numbers from events of the most common event
+            float totalDamage = 0.0;
+            float totalInjured = 0.0;
+            float totalDeath = 0.0;
+            float totalEvents = 0.0; // total number of events
             for(int i = 0; i < chosen.size(); i++){
                 if(chosen.at(i).getEvent() == mostEvent){
-                    avgDamage += stof(chosen.at(i).getPropertyDMG());
-                    avgInjured += stof(chosen.at(i).getInjuries());
-                    avgDeath += stof(chosen.at(i).getDeaths());
-                    total++;
+                    totalDamage += stof(chosen.at(i).getPropertyDMG());
+                    totalInjured += stof(chosen.at(i).getInjuries());
+                    totalDeath += stof(chosen.at(i).getDeaths());
+                    totalEvents++;
                 }
             }
-            avgDamage = (avgDamage / total);
-            avgDeath = (avgDeath / total);
-            avgInjured = (avgInjured / total);
+            //get the average data
+            int avgDamage = (totalDamage / totalEvents) + .5;
+            int avgDeath = (totalDeath / totalEvents) + .5;
+            int avgInjured = (totalInjured / totalEvents) + .5;
 
             vector<string> predictedData;
-            predictedData.push_back("Most Likely Event: " + mostEvent);
-            predictedData.push_back("Most likely Damage: " + to_string(avgDamage));
-            predictedData.push_back("Most Likely Injured: " + to_string(avgInjured));
-            predictedData.push_back("Most Likely Dead: " + to_string(avgDeath));
+            predictedData.push_back("Predicted event: " + mostEvent);
+            predictedData.push_back("Predicted amount of property damage: $" + to_string(avgDamage));
+            predictedData.push_back("Predicted number of injuries: " + to_string(avgInjured));
+            predictedData.push_back("Predicted number of deaths: " + to_string(avgDeath));
 
             return predictedData;
-
         }
 
 };
@@ -277,7 +288,7 @@ std::map<std::string, vector<weatherData>> populateMap(string csvFile) //read th
             getline(str, dmg, ',');
             getline(str, tor, ',');
 
-            if((injuryD != "0.0" && injuryD != "-100") && (dmg != "0.0" && dmg != "-100")) {
+            if((injuryD != "0.0" && injuryD != "-100") && (dmg != "0K" && dmg != "-100")) {
                 weatherData data(year, event, injuryD, injuryInd, deathDirect, deathIndirect, dmg,tor); //create a dara object
                 tempMap[state].push_back(data); //append the data object to the end of the states data vector
             }
@@ -303,8 +314,12 @@ void printMap(std::map<std::string, vector<weatherData>> weatherMap, string user
                 sorted = data.second.at(0).mergeSort(data.second);
             }
             prediciton = data.second.at(0).getPrediction(sorted, userYear, foundYear);
-            for(int i = 0; i < prediciton.size(); i ++){
-                cout << prediciton.at(i) << endl;
+            string year = userYear.substr(0, 4);
+            if(foundYear){
+                cout << "Here is the predicted data for " + userState + " in " + year + ": " << endl;
+                for(int i = 0; i < prediciton.size(); i ++) {
+                    cout << prediciton.at(i) << endl;
+                }
             }
         }
     }
@@ -317,32 +332,34 @@ void runProgram() //runs the program, keeps main clean
     bool stateFound = false;
     bool yearFound = false;
     std::map<std::string, vector<weatherData>> weatherMap = populateMap("filteredWeatherData.csv");
+    cout << "Hello! Welcome to the weather predictor!\n\n";
     do //run until user doesn't want to
     {
         stateFound = false;
         yearFound = false;
-        cout << "Hi! Which state would you like weather data for?\n";
+        cout << "Which state would you like see data for?\n";
         cin >> inputState;
         transform(inputState.begin(), inputState.end(), inputState.begin(), ::toupper);
         //https://stackoverflow.com/questions/23418390/how-to-convert-a-c-string-to-uppercase
-        cout << "\nGreat thanks for the information! For " + inputState + ", which year would you like weather data for?\n";
+        cout << "\nGreat thanks for the information!\nFor " + inputState + ", which year (from 1950 to 1999) would you like to get the predicted data for?\n";
         cin >> inputYear;
         inputYear = inputYear+ ".0";
-        cout << "\nWhich sorting algorihtm would you like to use? Enter 0 for Quick Sort or 1 for Merge Sort\n";
+        cout << "\nWhich sorting algorithm would you like to use to sort through the data? Enter 0 for Quick Sort or 1 for Merge Sort\n";
         cin >> sort;
         cout << "\nThanks, one moment while we prepare this data for you. Hope your day is going great!\n\n";
+
         printMap(weatherMap, inputState, inputYear, stateFound, yearFound, sort);
 
         if(!stateFound)
         {
-            cout << "Thanks for waiting! Unfortunately, there is no data for that state.\n\n";
+            cout << "Thanks for waiting! Unfortunately, there is no data for that state.\n";
         }
         else if (!yearFound)
         {
-            cout << "Thanks for waiting! Unfortunately, for " + inputState + " there is no data for that year.\n\n";
+            cout << "Thanks for waiting! Unfortunately, for " + inputState + " there is no data for that year.\n";
         }
 
-        cout << "Would you like to enter another state and year to try again? (Y/N)\n";
+        cout << "\nWould you like to enter another state and year to try again? (Y/N)\n";
         cin >> again;
         cout << "\n";
         transform(again.begin(), again.end(), again.begin(), ::toupper);
