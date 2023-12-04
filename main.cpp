@@ -144,11 +144,11 @@ class weatherData //weather data to store the associated data in the map
             if (stateData.size() <= 1)
                 return stateData;
             int mid = stateData.size()/2; //divide map in half and recursively sort each half
-            int midYear = stoi(stateData.at(mid).getYear());
+            int midYear = std::stoi(stateData.at(mid).getYear());
             vector<weatherData> leftMap;
             vector<weatherData> rightMap;
             for (int i = 0; i < stateData.size(); i++) {
-                if (i < midYear) {
+                if (std::stoi(stateData[i].getYear()) < midYear) {
                     leftMap.push_back(stateData[i]);
                 }
                 else {
