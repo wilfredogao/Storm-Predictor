@@ -8,7 +8,9 @@
 #include <unordered_map>
 #include <vector>
 #include <cmath>
+#include <chrono>
 using namespace std;
+using namespace std::chrono;
 
 class weatherData //weather data to store the associated data in the map
 {
@@ -331,10 +333,20 @@ void printMap(std::map<std::string, vector<weatherData>> weatherMap, string user
         if (userState == data.first) {
             foundState = true;
             if(sortChoice == "0"){
+                auto begin = high_resolution_clock::now(); 
+                //https://www.geeksforgeeks.org/measure-execution-time-function-cpp/
                 sorted = data.second.at(0).quickSort(data.second, 0, sorted.size() - 1);
+                auto end = high_resolution_clock::now();
+                auto sortTime = duration_cast<microseconds>(end - begin);
+                cout << "Quick Sort execution: " << (double)sortTime.count() / 1000 << " milliseconds\n";
             }
             else if (sortChoice == "1"){
+                auto begin = high_resolution_clock::now(); 
+                //https://www.geeksforgeeks.org/measure-execution-time-function-cpp/
                 sorted = data.second.at(0).mergeSort(data.second);
+                auto end = high_resolution_clock::now();
+                auto sortTime = duration_cast<microseconds>(end - begin);
+                cout << "Merge Sort execution: " << (double)sortTime.count() / 1000 << " milliseconds\n";
             }
             prediciton = data.second.at(0).getPrediction(sorted, userYear, foundYear);
             string year = userYear.substr(0, 4);
