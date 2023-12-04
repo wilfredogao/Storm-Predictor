@@ -111,10 +111,10 @@ class weatherData //weather data to store the associated data in the map
                     temp = "0";
                 }
                 else if(propertyDamage.at(propertyDamage.size() - 1) == 'K'){
-                    temp = to_string(stoi(propertyDamage.substr(0, propertyDamage.size() - 1)) * 1000);
+                    temp = to_string((int)stof(propertyDamage.substr(0, propertyDamage.size() - 1)) * 1000);
                 }
                 else if(propertyDamage.at(propertyDamage.size() - 1) == 'M'){
-                    temp = to_string(stoi(propertyDamage.substr(0, propertyDamage.size() - 1)) * 1000000);
+                    temp = to_string((int)stof(propertyDamage.substr(0, propertyDamage.size() - 1)) * 1000000);
                 }
                 return temp;
         }
@@ -353,7 +353,7 @@ void runProgram() //runs the program, keeps main clean
     bool stateFound = false;
     bool yearFound = false;
     std::map<std::string, vector<weatherData>> weatherMap = populateMap("filteredWeatherData.csv");
-    cout << "Hello! Welcome to the weather predictor!\n\n";
+    cout << "Hi! Welcome to the weather predictor!\n\n";
     do //run until user doesn't want to
     {
         stateFound = false;
