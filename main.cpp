@@ -5,6 +5,7 @@
 #include <cctype>
 #include <algorithm>
 #include <map>
+#include <unordered_map>
 #include <vector>
 using namespace std;
 
@@ -24,12 +25,12 @@ class weatherData //weather data to store the associated data in the map
         //constructor
         weatherData(string y, string event, string injuriesD, string injuriesInd, string deathD, string deathInd, string propertyD, string TorS):
             year(y),
-            eventType(event), 
-            injuriesDirect(injuriesD), 
-            injuriesIndirect(injuriesInd), 
-            deathsDirect(deathD), 
-            deathsIndirect(deathInd), 
-            propertyDamage(propertyD), 
+            eventType(event),
+            injuriesDirect(injuriesD),
+            injuriesIndirect(injuriesInd),
+            deathsDirect(deathD),
+            deathsIndirect(deathInd),
+            propertyDamage(propertyD),
             torScale(TorS){}
 
         //accessors
@@ -52,22 +53,22 @@ class weatherData //weather data to store the associated data in the map
         std::string getInjuries()
         {
             std::string temp = "";
-            try 
+            try
             {
-                if (injuriesDirect == "-100") 
+                if (injuriesDirect == "-100")
                 {
                     injuriesDirect = "0";
-                } 
-                if (injuriesIndirect == "-100") 
+                }
+                if (injuriesIndirect == "-100")
                 {
                     injuriesIndirect = "0";
                 }
 
                 temp = std::to_string(std::stoi(injuriesDirect) + std::stoi(injuriesIndirect));
-            } 
-            catch (const std::invalid_argument& e) 
+            }
+            catch (const std::invalid_argument& e)
             {
-                temp = "0";   
+                temp = "0";
             }
 
             return temp;
@@ -76,20 +77,20 @@ class weatherData //weather data to store the associated data in the map
         std::string getDeaths()
         {
            std::string temp = "";
-            try 
+            try
             {
-                if (deathsDirect == "-100") 
+                if (deathsDirect == "-100")
                 {
                     deathsDirect = "0";
-                } 
-                if (deathsIndirect == "-100") 
+                }
+                if (deathsIndirect == "-100")
                 {
                     deathsIndirect = "0";
                 }
 
                 temp = std::to_string(std::stoi(deathsDirect) + std::stoi(deathsIndirect));
-            } 
-            catch (const std::invalid_argument& e) 
+            }
+            catch (const std::invalid_argument& e)
             {
                 temp = "0";
             }
@@ -102,14 +103,13 @@ class weatherData //weather data to store the associated data in the map
             string temp = "";
             if(propertyDamage == "-100") //set blanks to -100 in data processing
             {
-                return temp = "$0";
+                return temp = "0";
             }
             else
-                return temp = "$" + propertyDamage;
+                return temp = propertyDamage;
         }
 
-        std::string getTorScale() //returns tor scale
-        //https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/Storm-Data-Bulk-csv-Format.pdf 
+        std::string getTorScale() //returns tor scale https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/Storm-Data-Bulk-csv-Format.pdf
         {
             string temp = "";
             if(torScale == "-100") //set blanks to -100 in data processing
@@ -206,6 +206,52 @@ class weatherData //weather data to store the associated data in the map
             swap(stateData[left], stateData[high]); //move pivot to the middle
             return left; //return partitioning index
         }
+
+        vector<string> getPrediction(vector<weatherData> stateData, string year, bool &foundYear){
+            unordered_map<string, int> events;
+            vector<weatherData> chosen;
+            for (int i = 0; i < stateData.size();i++) {
+                if ((stoi(year) - 10) < stoi(stateData.at(i).getYear()) && stoi(stateData.at(i).getYear()) <= stoi(year)) {
+                    foundYear = true;
+                    events[stateData.at(i).getEvent()]++;
+                    chosen.push_back(stateData.at(i));
+                }
+            }
+            int max = 0;
+            string mostEvent;
+            for(auto& data : events) //looks through all elements
+            {
+                if(data.second > max){
+                    max = data.second;
+                    mostEvent = data.first;
+                }
+            }
+            float avgDamage = 0.0;
+            float avgInjured = 0.0;
+            float avgDeath = 0.0;
+            float total = 0.0; // total number of events
+            for(int i = 0; i < chosen.size(); i++){
+                if(chosen.at(i).getEvent() == mostEvent){
+                    avgDamage += stof(chosen.at(i).getPropertyDMG());
+                    avgInjured += stof(chosen.at(i).getInjuries());
+                    avgDeath += stof(chosen.at(i).getDeaths());
+                    total++;
+                }
+            }
+            avgDamage = (avgDamage / total);
+            avgDeath = (avgDeath / total);
+            avgInjured = (avgInjured / total);
+
+            vector<string> predictedData;
+            predictedData.push_back("Most Likely Event: " + mostEvent);
+            predictedData.push_back("Most likely Damage: " + to_string(avgDamage));
+            predictedData.push_back("Most Likely Injured: " + to_string(avgInjured));
+            predictedData.push_back("Most Likely Dead: " + to_string(avgDeath));
+
+            return predictedData;
+
+        }
+
 };
 
 std::map<std::string, vector<weatherData>> populateMap(string csvFile) //read the file and allocate data to a multimap
@@ -240,42 +286,25 @@ std::map<std::string, vector<weatherData>> populateMap(string csvFile) //read th
     return tempMap;
 }
 
-void printMap(std::map<std::string, vector<weatherData>> weatherMap, string userState, string userYear, bool& foundState, bool& foundYear) //prints the multimap data
+
+void printMap(std::map<std::string, vector<weatherData>> weatherMap, string userState, string userYear, bool& foundState, bool& foundYear, string sortChoice) //prints the multimap data
 {
-    bool firsttime = true;
-    /*auto it = weatherMap.begin();    //test to print first element
-    std::cout   << "State: " << it->first << "\n"
-                << "Year: " << it->second.getYear() << "\n"
-                << "Event: " << it->second.getEvent() << "\n"
-                //<< "Direct Injuries: " << it->second.injuriesDirect << "\n"
-                << "Resulting injuries: " << it->second.getInjuries() << "\n"
-                //<< "Direct Deaths: " << it->second.deathsDirect << "\n"
-                << "Resulting deaths: " << it->second.getDeaths() << "\n"
-                << "Property Damage: " << it->second.getPropertyDMG() << "\n"
-                << it->second.getTorScale() << "\n\n";
-    */
-    
+    vector<weatherData> sorted;
+    vector<string> prediciton;
+    bool validData = false;
     for(auto& data :weatherMap) //looks through all elements
     {
         if (userState == data.first) {
             foundState = true;
-            for (int i = 0; i < data.second.size();i++) {
-                if (userYear == data.second.at(i).getYear()) {
-                    if(firsttime){
-                        cout << "Thanks for waiting! Here's your weather report: " << endl;
-                        firsttime = false;
-                    }
-                    foundYear = true;
-                    std::cout << "State: " << data.first << "\n"
-                              << "Year: " << data.second.at(i).getYear() << "\n"
-                              << "Event: " << data.second.at(i).getEvent() << "\n"
-                              //<< "Direct Injuries: " << it->second.injuriesDirect << "\n"
-                              << "Resulting injuries: " << data.second.at(i).getInjuries() << "\n"
-                              //<< "Direct Deaths: " << it->second.deathsDirect << "\n"
-                              << "Resulting deaths: " << data.second.at(i).getDeaths() << "\n"
-                              << "Property Damage: " << data.second.at(i).getPropertyDMG() << "\n"
-                              << data.second.at(i).getTorScale() << "\n\n";
-                }
+            if(sortChoice == "0"){
+                sorted = data.second.at(0).quickSort(data.second, 0, sorted.size() - 1);
+            }
+            else if (sortChoice == "1"){
+                sorted = data.second.at(0).mergeSort(data.second);
+            }
+            prediciton = data.second.at(0).getPrediction(sorted, userYear, foundYear);
+            for(int i = 0; i < prediciton.size(); i ++){
+                cout << prediciton.at(i) << endl;
             }
         }
     }
@@ -283,7 +312,7 @@ void printMap(std::map<std::string, vector<weatherData>> weatherMap, string user
 
 void runProgram() //runs the program, keeps main clean 
 {
-    string inputState = "", inputYear = "", again = "";
+    string inputState = "", inputYear = "", again = "", sort = "";
     bool run = true;
     bool stateFound = false;
     bool yearFound = false;
@@ -299,8 +328,10 @@ void runProgram() //runs the program, keeps main clean
         cout << "\nGreat thanks for the information! For " + inputState + ", which year would you like weather data for?\n";
         cin >> inputYear;
         inputYear = inputYear+ ".0";
+        cout << "\nWhich sorting algorihtm would you like to use? Enter 0 for Quick Sort or 1 for Merge Sort\n";
+        cin >> sort;
         cout << "\nThanks, one moment while we prepare this data for you. Hope your day is going great!\n\n";
-        printMap(weatherMap, inputState, inputYear, stateFound, yearFound);
+        printMap(weatherMap, inputState, inputYear, stateFound, yearFound, sort);
 
         if(!stateFound)
         {
@@ -324,8 +355,8 @@ void runProgram() //runs the program, keeps main clean
     while(run);
 }
 
-int main() 
-{   
+int main()
+{
     runProgram();
     return 0;
 }
