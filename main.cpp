@@ -129,6 +129,83 @@ class weatherData //weather data to store the associated data in the map
             else if(torScale == "F5")
                 return temp = "Tor Scale: Incredible Damage (261 to 318 mph)";
         }
+
+        //basic merge sort function
+        vector<weatherData> mergeSort(vector<weatherData> stateData) {
+            if (stateData.size() <= 1)
+                return stateData;
+            int mid = stateData.size()/2; //divide map in half and recursively sort each half
+            int midYear = stoi(stateData.at(mid).getYear());
+            vector<weatherData> leftMap;
+            vector<weatherData> rightMap;
+            for (int i = 0; i < stateData.size(); i++) {
+                if (i < midYear) {
+                    leftMap.push_back(stateData[i]);
+                }
+                else {
+                    rightMap.push_back(stateData[i]);
+                }
+            }
+            vector<weatherData> left = mergeSort(leftMap); //recursively sort the left half of data
+            vector<weatherData> right = mergeSort(rightMap); //recursively sort the right half of data
+            return merge(left, right);
+        }
+
+        //merge function for merge sort
+        vector<weatherData> merge(vector<weatherData> left, vector<weatherData> right) {
+            vector<weatherData> result; //create empty map to store results
+            while(!left.empty() && !right.empty()) {
+                if (left[0].getYear() < right[0].getYear()) {
+                    result.push_back(left[0]);
+                    left.erase(left.begin());
+                }
+                else {
+                    result.push_back(right[0]);
+                    right.erase(right.begin());
+                }
+            }
+            while(!left.empty()) {
+                result.push_back(left[0]); //append remaining data points
+                left.erase(left.begin());
+            }
+            while(!right.empty()) {
+                result.push_back(right[0]);
+                right.erase(right.begin());
+            }
+            return result;
+        }
+
+
+        //basic quick sort function
+        vector<weatherData> quickSort (vector<weatherData> stateData, int low, int high) {
+            if (low < high) {
+                int pivotIndex = partition(stateData, low, high);
+                quickSort(stateData, low, pivotIndex-1); //recursively sort the left section
+                quickSort(stateData, pivotIndex+1, high); //recursively sort the right section
+            }
+            return stateData;
+        }
+
+        //partition function for quick sort
+        int partition (vector<weatherData> stateData, int low, int high) {
+            string pivot = stateData[high].getYear(); //choose the rightmost element as pivot
+            int left = low;
+            int right = high - 1;
+            while (true) {
+                while (left <= right && stateData[left].getYear() < pivot) {
+                    left = left + 1;
+                }
+                while (left <= right && stateData[right].getYear() > pivot) {
+                    right = right - 1;
+                }
+                if (left >= right) {
+                    break;
+                }
+                swap(stateData[left], stateData[right]);
+            }
+            swap(stateData[left], stateData[high]); //move pivot to the middle
+            return left; //return partitioning index
+        }
 };
 
 std::map<std::string, vector<weatherData>> populateMap(string csvFile) //read the file and allocate data to a multimap
@@ -252,75 +329,3 @@ int main()
     runProgram();
     return 0;
 }
-
-
-/*
-//basic merge sort function
-unmultimap<string, weatherData> mergeSort(unmultimap<string, weatherData> map) {
-    if (map.size() <= 1)
-        return map;
-    int mid = map.size()/2; //divide map in half and recursively sort each half
-    unmultimap<string, weatherData> leftMap;
-    unmultimap<string, weatherData> rightMap;
-    unmultimap<string, weatherData>::iterator it;
-    for (int i = 0; i < mid; i++) {
-        leftMap.insert(map[i]);
-    }
-    for (int j = mid; j < map.size(); j++) {
-        rightMap.insert(map[j]);
-    }
-    unmultimap<string, weatherData> left = mergeSort(leftMap); //recursively sort the left half of data
-    unmultimap<string, weatherData> right = mergeSort(rightMap); //recursively sort the right half of data
-    return merge(left, right);
-}
-
-//merge function for merge sort
-unmultimap<string, weatherData> merge(unmultimap<string, weatherData> left, unmultimap<string, weatherData> right) {
-    unmultimap<string, weatherData> result; //create empty map to store results
-    while(!left.empty() && !right.empty()) {
-        if (left[0] < right[0]) {
-            result.append(left[0]);
-            left = left[1:];
-        }
-        else {
-            result.append(right[0]);
-            right = right[1:];
-        }
-    }
-    result.extend(left); //append remaining data points
-    result.extend(right);
-    return result;
-}
-
-
-//basic quick sort function
-unmultimap<string, weatherData> quickSort (unmultimap<string, weatherData> map, int low, int high) {
-    if (low < high) {
-        int pivotIndex = partition(map, low, high);
-        quickSort(map, low, pivotIndex-1); //recursively sort the left section
-        quickSort(map, pivotIndex+1, high); //recursively sort the right section
-    }
-    return map;
-}
-
-//partition function for quick sort
-int partition (unmultimap<string, weatherData> map, int low, int high) {
-    string pivot = map[high]; //choose the rightmost element as pivot
-    int left = low;
-    int right = high - 1;
-    while (true) {
-        while (left <= right && map[left] < pivot) {
-            left = left + 1;
-        }
-        while (left <= right && map[right] > pivot) {
-            right = right - 1;
-        }
-        if (left >= right) {
-            break;
-        }
-        swap(map[left], map[right]);
-    }
-    swap(map[left], map[high]) //move pivot to the middle
-    return left; //return partitioning index
-}
-*/
