@@ -7,6 +7,7 @@
 #include <map>
 #include <unordered_map>
 #include <vector>
+#include <cmath>
 using namespace std;
 
 class weatherData //weather data to store the associated data in the map
@@ -143,7 +144,7 @@ class weatherData //weather data to store the associated data in the map
         vector<weatherData> mergeSort(vector<weatherData> stateData) {
             if (stateData.size() <= 1)
                 return stateData;
-            int mid = stateData.size()/2; //divide map in half and recursively sort each half
+            int mid = floor(stateData.size()/2); //divide map in half and recursively sort each half
             int midYear = std::stoi(stateData.at(mid).getYear());
             vector<weatherData> leftMap;
             vector<weatherData> rightMap;
@@ -166,13 +167,13 @@ class weatherData //weather data to store the associated data in the map
                     }
                 }
             }
-
-            for (int i = 0; i < stateData.size(); i++) {
-                if (std::stoi(stateData[i].getYear()) < midYear) {
-                    leftMap.push_back(stateData[i]);
-                }
-                else {
-                    rightMap.push_back(stateData[i]);
+            else {
+                for (int i = 0; i < stateData.size(); i++) {
+                    if (std::stoi(stateData[i].getYear()) <= midYear) {
+                        leftMap.push_back(stateData[i]);
+                    } else {
+                        rightMap.push_back(stateData[i]);
+                    }
                 }
             }
             vector<weatherData> left = mergeSort(leftMap); //recursively sort the left half of data
