@@ -45,7 +45,7 @@ After analysis, the application outputs the predicted event to occur in that yea
 * Algorithms-
 For our comparison purposes, we used 2 different algorithms:
 
-  ~Merge Sort
+  ~Heap Sort
 
   ~Quick Sort
 
