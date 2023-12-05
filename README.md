@@ -5,12 +5,12 @@ Storm Predictor is a console application that aims to provide a predicted weathe
 
 ## Table of Contents
 -------
-- [Interface](#Interface)
-- [Installation](#Installation)
-- [How-it-works](#How it works)
-- [Data-Structures-Used](#Data Structures Used)
-- [Data](#Data)
-- [Preprocessing](#Preprocessing)
+- [Interface](#interface)
+- [Installation](#installation)
+- [How it works](#how-it-works)
+- [Data Structures Used](#data-structures-used)
+- [Data](#data)
+- [Preprocessing](#preprocessing)
 
 ## Interface
 -------
