@@ -14,19 +14,19 @@ using namespace std::chrono;
 
 class weatherData //weather data to store the associated data in the map
 {
-private:
-    string year;
-    string eventType;
-    string injuriesDirect;
-    string injuriesIndirect;
-    string deathsDirect;
-    string deathsIndirect;
-    string propertyDamage;
-    string torScale;
+    private:
+        string year;
+        string eventType;
+        string injuriesDirect;
+        string injuriesIndirect;
+        string deathsDirect;
+        string deathsIndirect;
+        string propertyDamage;
+        string torScale;
 
-public:
-    //constructor
-    weatherData(string y, string event, string injuriesD, string injuriesInd, string deathD, string deathInd, string propertyD, string TorS):
+    public:
+        //constructor
+        weatherData(string y, string event, string injuriesD, string injuriesInd, string deathD, string deathInd, string propertyD, string TorS):
             year(y),
             eventType(event),
             injuriesDirect(injuriesD),
@@ -36,293 +36,257 @@ public:
             propertyDamage(propertyD),
             torScale(TorS){}
 
-    //accessors
-    std::string getYear()
-    {
-        return year;
-    }
-
-    std::string getEvent()
-    {
-        string temp = "";
-        if(eventType == "-100") //set blanks to -100 in data processing
+        //accessors
+        std::string getYear()
         {
-            return temp = "No event recorded";
+                return year;
         }
-        else
-            return temp = eventType;
-    }
 
-    std::string getInjuries()
-    {
-        std::string temp = "";
-        try
+        std::string getEvent()
         {
-            if (injuriesDirect == "-100")
+            string temp = "";
+            if(eventType == "-100") //set blanks to -100 in data processing
             {
-                injuriesDirect = "0";
+                return temp = "No event recorded";
             }
-            if (injuriesIndirect == "-100")
+            else
+                return temp = eventType;
+        }
+
+        std::string getInjuries()
+        {
+            std::string temp = "";
+            try
             {
-                injuriesIndirect = "0";
-            }
-
-            temp = std::to_string(std::stoi(injuriesDirect) + std::stoi(injuriesIndirect));
-        }
-        catch (const std::invalid_argument& e)
-        {
-            temp = "0";
-        }
-
-        return temp;
-    }
-
-    std::string getDeaths()
-    {
-        std::string temp = "";
-        try
-        {
-            if (deathsDirect == "-100")
-            {
-                deathsDirect = "0";
-            }
-            if (deathsIndirect == "-100")
-            {
-                deathsIndirect = "0";
-            }
-
-            temp = std::to_string(std::stoi(deathsDirect) + std::stoi(deathsIndirect));
-        }
-        catch (const std::invalid_argument& e)
-        {
-            temp = "0";
-        }
-
-        return temp;
-    }
-
-    std::string getPropertyDMG()
-    {
-        string temp = "";
-        if(propertyDamage == "-100") //set blanks to -100 in data processing
-        {
-            return temp = "0";
-        }
-        else
-        if(propertyDamage.substr(propertyDamage.size()-1, 1) == "0"){
-            temp = "0";
-        }
-        else if(propertyDamage.at(propertyDamage.size() - 1) == 'K'){
-            temp = to_string((int)stof(propertyDamage.substr(0, propertyDamage.size() - 1)) * 1000);
-        }
-        else if(propertyDamage.at(propertyDamage.size() - 1) == 'M'){
-            temp = to_string((int)stof(propertyDamage.substr(0, propertyDamage.size() - 1)) * 1000000);
-        }
-        else{
-            temp = propertyDamage;
-        }
-        return temp;
-    }
-
-    std::string getTorScale() //returns tor scale https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/Storm-Data-Bulk-csv-Format.pdf
-    {
-        string temp = "";
-        if(torScale == "-100") //set blanks to -100 in data processing
-        {
-            return temp = "";
-        }
-        else if(torScale == "F0")
-            return temp = "Tor Scale: Light Damage (40 to 72 mph)";
-        else if(torScale == "F1")
-            return temp = "Tor Scale: Moderate Damage (73 to 112 mph)";
-        else if(torScale == "F2")
-            return temp = "Tor Scale: Significant damage (113 to 157 mph)";
-        else if(torScale == "F3")
-            return temp = "Tor Scale: Severe Damage (158 to 206 mph)";
-        else if(torScale == "F4")
-            return temp = "Tor Scale: Devastating Damage (207 to 260 mph)";
-        else if(torScale == "F5")
-            return temp = "Tor Scale: Incredible Damage (261 to 318 mph)";
-    }
-
-    //basic merge sort function
-    /* vector<weatherData> mergeSort(vector<weatherData> stateData) {
-        if (stateData.size() <= 1)
-            return stateData;
-        int mid = floor(stateData.size()/2); //divide map in half and recursively sort each half
-        int midYear = std::stoi(stateData.at(mid-1).getYear()); //remember index starts at 0, not 1
-        vector<weatherData> leftMap;
-        vector<weatherData> rightMap;
-
-        //check if all data points are same year
-        int sameYearCount = 0;
-        for (int j = 0; j < stateData.size(); j++) {
-            if (stoi(stateData[j].getYear()) == midYear) {
-                sameYearCount++;
-            }
-        }
-        //if all data points have the same year, split based on current index
-        if (sameYearCount == stateData.size()) {
-            for (int k = 0; k < stateData.size(); k++) {
-                if (k < mid) {
-                    leftMap.push_back(stateData[k]);
+                if (injuriesDirect == "-100")
+                {
+                    injuriesDirect = "0";
                 }
-                else {
-                    rightMap.push_back(stateData[k]);
+                if (injuriesIndirect == "-100")
+                {
+                    injuriesIndirect = "0";
+                }
+
+                temp = std::to_string(std::stoi(injuriesDirect) + std::stoi(injuriesIndirect));
+            }
+            catch (const std::invalid_argument& e)
+            {
+                temp = "0";
+            }
+
+            return temp;
+        }
+
+        std::string getDeaths()
+        {
+           std::string temp = "";
+            try
+            {
+                if (deathsDirect == "-100")
+                {
+                    deathsDirect = "0";
+                }
+                if (deathsIndirect == "-100")
+                {
+                    deathsIndirect = "0";
+                }
+
+                temp = std::to_string(std::stoi(deathsDirect) + std::stoi(deathsIndirect));
+            }
+            catch (const std::invalid_argument& e)
+            {
+                temp = "0";
+            }
+
+            return temp;
+        }
+
+        std::string getPropertyDMG()
+        {
+            string temp = "";
+            if(propertyDamage == "-100") //set blanks to -100 in data processing
+            {
+                return temp = "0";
+            }
+            else
+                if(propertyDamage.substr(propertyDamage.size()-1, 1) == "0"){
+                    temp = "0";
+                }
+                else if(propertyDamage.at(propertyDamage.size() - 1) == 'K'){
+                    temp = to_string((int)stof(propertyDamage.substr(0, propertyDamage.size() - 1)) * 1000);
+                }
+                else if(propertyDamage.at(propertyDamage.size() - 1) == 'M'){
+                    temp = to_string((int)stof(propertyDamage.substr(0, propertyDamage.size() - 1)) * 1000000);
+                }
+                return temp;
+        }
+
+        std::string getTorScale() //returns tor scale https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/Storm-Data-Bulk-csv-Format.pdf
+        {
+            string temp = "";
+            if(torScale == "-100") //set blanks to -100 in data processing
+            {
+                return temp = "";
+            }
+            else if(torScale == "F0")
+                return temp = "Tor Scale: Light Damage (40 to 72 mph)";
+            else if(torScale == "F1")
+                return temp = "Tor Scale: Moderate Damage (73 to 112 mph)";
+            else if(torScale == "F2")
+                return temp = "Tor Scale: Significant damage (113 to 157 mph)";
+            else if(torScale == "F3")
+                return temp = "Tor Scale: Severe Damage (158 to 206 mph)";
+            else if(torScale == "F4")
+                return temp = "Tor Scale: Devastating Damage (207 to 260 mph)";
+            else if(torScale == "F5")
+                return temp = "Tor Scale: Incredible Damage (261 to 318 mph)";
+        }
+
+        //basic merge sort function
+        vector<weatherData> mergeSort(vector<weatherData> stateData) {
+            if (stateData.size() <= 1)
+                return stateData;
+            int mid = floor(stateData.size()/2); //divide map in half and recursively sort each half
+            int midYear = std::stoi(stateData.at(mid-1).getYear()); //remember index starts at 0, not 1
+            vector<weatherData> leftMap;
+            vector<weatherData> rightMap;
+
+            //check if all data points are same year
+            int sameYearCount = 0;
+            for (int j = 0; j < stateData.size(); j++) {
+                if (stoi(stateData[j].getYear()) == midYear) {
+                    sameYearCount++;
                 }
             }
-        }
-        else {
-            float midSplit = midYear + 0.5; // make sure midYear is between values so all indexes are split
-            //ie: 1992 1992 1994 -> midYear = 1992 -> midYear = 1992.5 -> leftMap = [1992, 1992], rightMap = [1994]
-            for (int i = 0; i < stateData.size(); i++) {
-                if (std::stof(stateData[i].getYear()) < midSplit) {
-                    leftMap.push_back(stateData[i]);
-                } else {
-                    rightMap.push_back(stateData[i]);
+            //if all data points have the same year, split based on current index
+            if (sameYearCount == stateData.size()) {
+                for (int k = 0; k < stateData.size(); k++) {
+                    if (k < mid) {
+                        leftMap.push_back(stateData[k]);
+                    }
+                    else {
+                        rightMap.push_back(stateData[k]);
+                    }
                 }
-            }
-        }
-        vector<weatherData> left = mergeSort(leftMap); //recursively sort the left half of data
-        vector<weatherData> right = mergeSort(rightMap); //recursively sort the right half of data
-        return merge(left, right);
-    } */
-
-    //merge function for merge sort
-    /* vector<weatherData> merge(vector<weatherData> left, vector<weatherData> right) {
-        vector<weatherData> result; //create empty map to store results
-        while(!left.empty() && !right.empty()) {
-            if (left[0].getYear() < right[0].getYear()) {
-                result.push_back(left[0]);
-                left.erase(left.begin());
             }
             else {
+                float midSplit = midYear + 0.5; // make sure midYear is between values so all indexes are split
+                //ie: 1992 1992 1994 -> midYear = 1992 -> midYear = 1992.5 -> leftMap = [1992, 1992], rightMap = [1994]
+                for (int i = 0; i < stateData.size(); i++) {
+                    if (std::stof(stateData[i].getYear()) < midSplit) {
+                        leftMap.push_back(stateData[i]);
+                    } else {
+                        rightMap.push_back(stateData[i]);
+                    }
+                }
+            }
+            vector<weatherData> left = mergeSort(leftMap); //recursively sort the left half of data
+            vector<weatherData> right = mergeSort(rightMap); //recursively sort the right half of data
+            return merge(left, right);
+        }
+
+        //merge function for merge sort
+        vector<weatherData> merge(vector<weatherData> left, vector<weatherData> right) {
+            vector<weatherData> result; //create empty map to store results
+            while(!left.empty() && !right.empty()) {
+                if (left[0].getYear() < right[0].getYear()) {
+                    result.push_back(left[0]);
+                    left.erase(left.begin());
+                }
+                else {
+                    result.push_back(right[0]);
+                    right.erase(right.begin());
+                }
+            }
+            while(!left.empty()) {
+                result.push_back(left[0]); //append remaining data points
+                left.erase(left.begin());
+            }
+            while(!right.empty()) {
                 result.push_back(right[0]);
                 right.erase(right.begin());
             }
+            return result;
         }
-        while(!left.empty()) {
-            result.push_back(left[0]); //append remaining data points
-            left.erase(left.begin());
-        }
-        while(!right.empty()) {
-            result.push_back(right[0]);
-            right.erase(right.begin());
-        }
-        return result;
-    } */
 
 
-    //basic quick sort function
-    vector<weatherData> quickSort (vector<weatherData> stateData, int low, int high) {
-        if (low < high) {
-            int pivotIndex = partition(stateData, low, high);
-            quickSort(stateData, low, pivotIndex-1); //recursively sort the left section
-            quickSort(stateData, pivotIndex+1, high); //recursively sort the right section
-        }
-        return stateData;
-    }
-
-    //partition function for quick sort
-    int partition (vector<weatherData> stateData, int low, int high) {
-        string pivot = stateData[high].getYear(); //choose the rightmost element as pivot
-        int left = low;
-        int right = high - 1;
-        while (true) {
-            while (left <= right && stateData[left].getYear() < pivot) {
-                left = left + 1;
+        //basic quick sort function
+        vector<weatherData> quickSort (vector<weatherData> stateData, int low, int high) {
+            if (low < high) {
+                int pivotIndex = partition(stateData, low, high);
+                quickSort(stateData, low, pivotIndex-1); //recursively sort the left section
+                quickSort(stateData, pivotIndex+1, high); //recursively sort the right section
             }
-            while (left <= right && stateData[right].getYear() > pivot) {
-                right = right - 1;
+            return stateData;
+        }
+
+        //partition function for quick sort
+        int partition (vector<weatherData> stateData, int low, int high) {
+            string pivot = stateData[high].getYear(); //choose the rightmost element as pivot
+            int left = low;
+            int right = high - 1;
+            while (true) {
+                while (left <= right && stateData[left].getYear() < pivot) {
+                    left = left + 1;
+                }
+                while (left <= right && stateData[right].getYear() > pivot) {
+                    right = right - 1;
+                }
+                if (left >= right) {
+                    break;
+                }
+                swap(stateData[left], stateData[right]);
             }
-            if (left >= right) {
-                break;
+            swap(stateData[left], stateData[high]); //move pivot to the middle
+            return left; //return partitioning index
+        }
+
+        vector<string> getPrediction(vector<weatherData> stateData, string year, bool &foundYear){
+            unordered_map<string, int> events; //events stored as key, times the event happen as the value
+            vector<weatherData> chosen; //the weather data that appears in the given time frame
+            for (int i = 0; i < stateData.size();i++) {
+                if ((stoi(year) - 10) < stoi(stateData.at(i).getYear()) && stoi(stateData.at(i).getYear()) <= stoi(year)) {
+                    foundYear = true;
+                    events[stateData.at(i).getEvent()]++;
+                    chosen.push_back(stateData.at(i));
+                }
             }
-            swap(stateData[left], stateData[right]);
-        }
-        swap(stateData[left], stateData[high]); //move pivot to the middle
-        return left; //return partitioning index
-    }
 
-    vector<string> getPrediction(vector<weatherData> stateData, string year, bool &foundYear){
-        unordered_map<string, int> events; //events stored as key, times the event happen as the value
-        vector<weatherData> chosen; //the weather data that appears in the given time frame
-        for (int i = 0; i < stateData.size();i++) {
-            if ((stoi(year) - 10) < stoi(stateData.at(i).getYear()) && stoi(stateData.at(i).getYear()) <= stoi(year)) {
-                foundYear = true;
-                events[stateData.at(i).getEvent()]++;
-                chosen.push_back(stateData.at(i));
+            int max = 0; //most common event
+            string mostEvent; //event that happens the most
+            for(auto& data : events)
+            {
+                if(data.second > max){
+                    max = data.second; //if there is an event that happend the msot
+                    mostEvent = data.first; //the event
+                }
             }
-        }
-
-        int max = 0; //most common event
-        string mostEvent; //event that happens the most
-        for(auto& data : events)
-        {
-            if(data.second > max){
-                max = data.second; //if there is an event that happend the msot
-                mostEvent = data.first; //the event
+            //get the total data numbers from events of the most common event
+            float totalDamage = 0.0;
+            float totalInjured = 0.0;
+            float totalDeath = 0.0;
+            float totalEvents = 0.0; // total number of events
+            for(int i = 0; i < chosen.size(); i++){
+                if(chosen.at(i).getEvent() == mostEvent){
+                    totalDamage += stof(chosen.at(i).getPropertyDMG());
+                    totalInjured += stof(chosen.at(i).getInjuries());
+                    totalDeath += stof(chosen.at(i).getDeaths());
+                    totalEvents++;
+                }
             }
+            //get the average data
+            int avgDamage = (totalDamage / totalEvents) + .5;
+            int avgDeath = (totalDeath / totalEvents) + .5;
+            int avgInjured = (totalInjured / totalEvents) + .5;
+
+            vector<string> predictedData;
+            predictedData.push_back("Predicted event: " + mostEvent);
+            predictedData.push_back("Predicted amount of property damage: $" + to_string(avgDamage));
+            predictedData.push_back("Predicted number of injuries: " + to_string(avgInjured));
+            predictedData.push_back("Predicted number of deaths: " + to_string(avgDeath));
+
+            return predictedData;
         }
-        //get the total data numbers from events of the most common event
-        float totalDamage = 0.0;
-        float totalInjured = 0.0;
-        float totalDeath = 0.0;
-        float totalEvents = 0.0; // total number of events
-        for(int i = 0; i < chosen.size(); i++){
-            if(chosen.at(i).getEvent() == mostEvent){
-                totalDamage += stof(chosen.at(i).getPropertyDMG());
-                totalInjured += stof(chosen.at(i).getInjuries());
-                totalDeath += stof(chosen.at(i).getDeaths());
-                totalEvents++;
-            }
-        }
-        //get the average data
-        int avgDamage = (totalDamage / totalEvents) + .5;
-        int avgDeath = (totalDeath / totalEvents) + .5;
-        int avgInjured = (totalInjured / totalEvents) + .5;
-
-        vector<string> predictedData;
-        predictedData.push_back("Predicted event: " + mostEvent);
-        predictedData.push_back("Predicted amount of property damage: $" + to_string(avgDamage));
-        predictedData.push_back("Predicted number of injuries: " + to_string(avgInjured));
-        predictedData.push_back("Predicted number of deaths: " + to_string(avgDeath));
-
-        return predictedData;
-    }
-
-    void heapSort(vector<weatherData> &stateData){
-        int size = stateData.size();
-
-        for(int i = (size / 2) - 1; i >= 0; i --){
-            heapify(stateData, size, i);
-        }
-
-        for(int i = size - 1; i > 0; i--){
-            swap(stateData.at(0), stateData.at(i));
-            heapify(stateData, i, 0);
-        }
-    } //build in place a heap to sort state data
-
-    void heapify(vector<weatherData> &stateData, int size, int i){
-        int index = i;
-        int left = 2 * i + 1;
-        int right = 2 * i + 2;
-
-        if(left < size && stoi(stateData.at(left).getYear()) > stoi(stateData.at(index).getYear())){
-            index = left;
-        }
-
-        if(right < size && stoi(stateData.at(right).getYear()) > stoi(stateData.at(index).getYear())){
-            index = right;
-        }
-
-        if(index != i){
-            swap(stateData.at(i),stateData.at(index));
-
-            heapify(stateData, size, index);
-        }
-    } //heapify used for heap sort
 
 };
 
@@ -349,7 +313,7 @@ std::map<std::string, vector<weatherData>> populateMap(string csvFile) //read th
             getline(str, dmg, ',');
             getline(str, tor, ',');
 
-            if((injuryD != "0.0" && injuryD != "-100") && (dmg != "0K" && dmg != "-100")) {
+           if((injuryD != "0.0" && injuryD != "-100") && (dmg != "0K" && dmg != "-100")) {
                 weatherData data(year, event, injuryD, injuryInd, deathDirect, deathIndirect, dmg,tor); //create a dara object
                 tempMap[state].push_back(data); //append the data object to the end of the states data vector
             }
@@ -357,6 +321,7 @@ std::map<std::string, vector<weatherData>> populateMap(string csvFile) //read th
     }
     return tempMap;
 }
+
 
 void printMap(std::map<std::string, vector<weatherData>> weatherMap, string userState, string userYear, bool& foundState, bool& foundYear, string sortChoice) //prints the multimap data
 {
@@ -368,21 +333,20 @@ void printMap(std::map<std::string, vector<weatherData>> weatherMap, string user
         if (userState == data.first) {
             foundState = true;
             if(sortChoice == "0"){
-                auto begin = high_resolution_clock::now();
-                //https://www.geeksforgeeks.org/measure-execution-time-function-cpp
+                auto begin = high_resolution_clock::now(); 
+                //https://www.geeksforgeeks.org/measure-execution-time-function-cpp/
                 sorted = data.second.at(0).quickSort(data.second, 0, sorted.size() - 1);
                 auto end = high_resolution_clock::now();
                 auto sortTime = duration_cast<microseconds>(end - begin);
                 cout << "Quick Sort execution: " << (double)sortTime.count() / 1000 << " milliseconds\n";
             }
             else if (sortChoice == "1"){
-                sorted = data.second;
-                auto begin = high_resolution_clock::now();
+                auto begin = high_resolution_clock::now(); 
                 //https://www.geeksforgeeks.org/measure-execution-time-function-cpp/
-                data.second.at(0).heapSort(sorted);
+                sorted = data.second.at(0).mergeSort(data.second);
                 auto end = high_resolution_clock::now();
                 auto sortTime = duration_cast<microseconds>(end - begin);
-                cout << "Heap Sort execution: " << (double)sortTime.count() / 1000 << " milliseconds\n";
+                cout << "Merge Sort execution: " << (double)sortTime.count() / 1000 << " milliseconds\n";
             }
             prediciton = data.second.at(0).getPrediction(sorted, userYear, foundYear);
             string year = userYear.substr(0, 4);
@@ -396,7 +360,7 @@ void printMap(std::map<std::string, vector<weatherData>> weatherMap, string user
     }
 }
 
-void runProgram() //runs the program, keeps main clean
+void runProgram() //runs the program, keeps main clean 
 {
     string inputState = "", inputYear = "", again = "", sort = "";
     bool run = true;
@@ -415,7 +379,7 @@ void runProgram() //runs the program, keeps main clean
         cout << "\nGreat thanks for the information!\nFor " + inputState + ", which year (from 1950 to 1999) would you like to get the predicted data for?\n";
         cin >> inputYear;
         inputYear = inputYear+ ".0";
-        cout << "\nWhich sorting algorithm would you like to use to sort through the data? Enter 0 for Quick Sort or 1 for Heap Sort\n";
+        cout << "\nWhich sorting algorithm would you like to use to sort through the data? Enter 0 for Quick Sort or 1 for Merge Sort\n";
         cin >> sort;
         cout << "\nThanks, one moment while we prepare this data for you. Hope your day is going great!\n\n";
 
