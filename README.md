@@ -18,7 +18,7 @@ Storm Predictor is a console application that aims to provide a predicted weathe
 
 ## Installation
 -------
-To use the Storm Predictor applicaiton, follow these installation steps:
+To use the Storm Predictor application, follow these installation steps:
 
 1. Clone the repository to your local machine:
 ```bash
