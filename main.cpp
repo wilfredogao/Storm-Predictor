@@ -118,6 +118,9 @@ class weatherData //weather data to store the associated data in the map
                 else if(propertyDamage.at(propertyDamage.size() - 1) == 'M'){
                     temp = to_string((int)stof(propertyDamage.substr(0, propertyDamage.size() - 1)) * 1000000);
                 }
+                else{
+                    temp = propertyDamage;
+                }
                 return temp;
         }
 
@@ -321,7 +324,6 @@ std::map<std::string, vector<weatherData>> populateMap(string csvFile) //read th
     }
     return tempMap;
 }
-
 
 void printMap(std::map<std::string, vector<weatherData>> weatherMap, string userState, string userYear, bool& foundState, bool& foundYear, string sortChoice) //prints the multimap data
 {
